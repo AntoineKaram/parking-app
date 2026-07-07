@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: parking
+      POSTGRES_PASSWORD: parking
+      POSTGRES_DB: parking
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U parking -d parking"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgres://parking:parking@db:5432/parking
+      JWT_SECRET: change-me-in-production
+      PORT: 4000
+    ports:
+      - "4000:4000"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  pgdata:

@@ -1,8 +1,17 @@
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 
+const connectionString =
+  process.env.DATABASE_URL || 'postgres://parking:parking@localhost:5432/parking';
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || 'postgres://parking:parking@localhost:5432/parking',
+  connectionString,
+  // managed Postgres providers (Neon, Supabase, RDS, ...) require TLS
+  ssl: /sslmode=require|neon\.tech|supabase\.co|render\.com/.test(connectionString)
+    ? { rejectUnauthorized: false }
+    : undefined,
+  // keep the pool small in serverless environments — each instance gets its own pool
+  max: process.env.VERCEL ? 3 : 10,
 });
 
 const SCHEMA = `

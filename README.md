@@ -66,6 +66,36 @@ cd backend && npm install && npm start          # http://localhost:4000
 cd frontend && npm install && npm run dev       # http://localhost:5173
 ```
 
+## Deploy to Vercel (with a GoDaddy domain)
+
+Vercel serves `frontend/dist` as static files and runs the Express API as a
+serverless function ([api/index.js](api/index.js)). Postgres must live on a managed
+provider — Neon's free tier works well and is available in the Vercel Marketplace.
+
+1. **Database** — create a Postgres database on [Neon](https://neon.tech)
+   (or Vercel Marketplace → Storage → Neon). Copy the connection string
+   (`postgres://...@...neon.tech/...?sslmode=require`).
+2. **Import the repo** — on [vercel.com](https://vercel.com) → *Add New → Project*
+   → import `parking-app` from GitHub. Framework preset: **Other** (the included
+   `vercel.json` drives the build).
+3. **Environment variables** — in the project settings add:
+   - `DATABASE_URL` = the Neon connection string
+   - `JWT_SECRET` = a long random string (e.g. output of `openssl rand -hex 32`)
+4. **Deploy** — the first request creates the schema and seeds the demo accounts
+   and sample floor. Check `https://<project>.vercel.app/api/health`.
+   ⚠️ Change the seeded admin password immediately on a public deployment.
+5. **GoDaddy domain** — in Vercel: *Project → Settings → Domains → Add* your domain.
+   Then in GoDaddy: *My Products → DNS* for the domain and add what Vercel shows you,
+   typically:
+   - `A` record, name `@`, value `76.76.21.21`
+   - `CNAME` record, name `www`, value `cname.vercel-dns.com`
+   Remove GoDaddy's default "Parked" A record if present. DNS can take up to an
+   hour; Vercel issues the HTTPS certificate automatically once it verifies.
+
+Notes: the Docker setup keeps working unchanged for local dev
+(`backend/src/index.js` is the long-running entrypoint; Vercel uses
+`api/index.js`). On serverless, schema/seed checks run once per cold start.
+
 ## Configuration
 
 | Variable       | Where    | Default                                   |

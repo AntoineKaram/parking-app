@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from '../api';
 import FloorGrid from '../components/FloorGrid';
+import useFitCellSize from '../hooks/useFitCellSize';
 
 function todayStr() {
   const d = new Date();
@@ -15,7 +16,8 @@ export default function ParkingView() {
   const [modal, setModal] = useState(null); // {cell, booking}
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
-  const [cellSize, setCellSize] = useState(() => (window.innerWidth < 640 ? 32 : 44));
+  const gridRef = useRef(null);
+  const [cellSize, setCellSize] = useFitCellSize(data?.floor, gridRef);
 
   useEffect(() => {
     api
@@ -120,7 +122,7 @@ export default function ParkingView() {
             <span><i className="sw stairs" /> Stairs</span>
             <span><i className="sw entrance" /> Entrance</span>
           </div>
-          <div className="grid-scroll">
+          <div className="grid-scroll" ref={gridRef}>
             <FloorGrid
               floor={data.floor}
               cells={data.cells}

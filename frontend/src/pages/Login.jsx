@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth';
+import Logo from '../components/Logo';
 
 export default function Login() {
   const { user, login, register } = useAuth();
@@ -32,8 +33,14 @@ export default function Login() {
   return (
     <div className="login-wrap">
       <div className="login-card">
-        <h1>🅿️ Company Parking</h1>
-        <p className="muted">Book your parking spot for the day.</p>
+        <div className="login-brand">
+          <Logo size={44} />
+          <h1>
+            <span className="brand-med">MED</span>
+            <span className="brand-square">SQUARE</span>
+          </h1>
+        </div>
+        <p className="muted">Company parking — book your spot for the day.</p>
         <div className="tabs">
           <button className={mode === 'login' ? 'tab active' : 'tab'} onClick={() => setMode('login')}>
             Sign in

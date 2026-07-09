@@ -112,6 +112,7 @@ export default function FloorGrid({
       style={{
         gridTemplateColumns: `repeat(${floor.grid_width}, ${cellSize}px)`,
         gridTemplateRows: `repeat(${floor.grid_height}, ${cellSize}px)`,
+        fontSize: `${Math.max(7, Math.round(cellSize * 0.3))}px`,
         touchAction: touchPaint ? 'none' : undefined,
       }}
       onMouseLeave={() => onMouseUp && onMouseUp()}

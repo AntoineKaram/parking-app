@@ -1,5 +1,6 @@
 import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
 import { useAuth } from './auth';
+import Logo from './components/Logo';
 import Login from './pages/Login';
 import ParkingView from './pages/ParkingView';
 import MyBookings from './pages/MyBookings';
@@ -20,7 +21,12 @@ function Nav() {
   if (!user) return null;
   return (
     <nav className="topnav">
-      <div className="brand">🅿️ Company Parking</div>
+      <div className="brand">
+        <Logo size={22} />
+        <span className="brand-med">MED</span>
+        <span className="brand-square">SQUARE</span>
+        <span className="brand-app">Parking</span>
+      </div>
       <div className="nav-links">
         <NavLink to="/">Parking Map</NavLink>
         <NavLink to="/my-bookings">My Bookings</NavLink>

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { api } from '../../api';
 import FloorGrid from '../../components/FloorGrid';
+import useFitCellSize from '../../hooks/useFitCellSize';
 
 const TOOLS = [
   { key: 'spot', label: '🅿 Spot', hint: 'Bookable parking spot (2 squares)' },
@@ -31,9 +32,10 @@ export default function FloorEditor() {
   const [dirty, setDirty] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
-  const [cellSize, setCellSize] = useState(() => (window.innerWidth < 640 ? 32 : 40));
   const [newFloor, setNewFloor] = useState({ name: '', grid_width: 14, grid_height: 10 });
   const painting = useRef(false);
+  const gridRef = useRef(null);
+  const [cellSize, setCellSize] = useFitCellSize(floor, gridRef, { min: 16, max: 40 });
 
   const loadFloors = () =>
     api
@@ -295,7 +297,7 @@ export default function FloorEditor() {
                 </button>
               </div>
             )}
-            <div className="grid-scroll">
+            <div className="grid-scroll" ref={gridRef}>
               <FloorGrid
                 floor={floor}
                 cells={Object.values(cells)}
